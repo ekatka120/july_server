@@ -29,6 +29,7 @@ void 	Response::setUpBody(std::stringstream &buffer) {
 	_contentLength = buffer.str();
 }
 
+
 void Response::setUpHeaders() {
 	_headers += "Server: geniusx/1.1.0\n";
 	_headers += "Date: Sun, 20 Jun 2021 08:59:22 GMT\n";//generate time

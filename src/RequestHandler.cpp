@@ -11,6 +11,7 @@ RequestHandler::RequestHandler(Server *server) : _server(server){
     _badContentSize = 0;
     _wrongHTTPVersion = 0;
     _badRequest = 0;
+    std::cout << "Constructor\n";
 }
 
 RequestHandler::RequestHandler(const RequestHandler &other){
@@ -18,7 +19,7 @@ RequestHandler::RequestHandler(const RequestHandler &other){
 }
 
 RequestHandler::~RequestHandler() {
-    delete _response;
+    //delete _response;
     std::cout << "RequestHandler destructor\n";
 }
 
@@ -112,7 +113,6 @@ int					RequestHandler::checkNewPartOfRequest(char *partOfRequest){
         _rawRequest = "";
         return 1;
     }
-    std::cout << "checkNewPartOfRequest\n";
 }
 
 int					RequestHandler::checkFirstStr(std::cmatch result, std::regex rex)
@@ -306,7 +306,7 @@ void	RequestHandler::responseToPostRequest()
     std::string filename = _filePath + _url;
 
     //Temporary (while _body does not work)
-    _body = _rawRequest;
+    //_body = _rawRequest;
     std::cout << "cgi " << _currentLocation->cgi_extension << "\n";
     _currentLocation->cgi_extension = "/Users/dskittri/Downloads/july_boris_server/cgi_tester";
     std::cout << "cgi " << _currentLocation->cgi_extension << "\n";
@@ -359,7 +359,6 @@ void	RequestHandler::responseToPostRequest()
         cgi_obj.cgi_start(info);
         std::stringstream buffer;
         buffer << cgi_obj.getResponseBody();
-        std::cout << "_response" << std::endl;
         _response->setUpBody(buffer);
         _response->setServerAnswer(cgi_obj.getAnswerHeader());
         _response->setUpHeaders();
@@ -417,7 +416,7 @@ void				RequestHandler::prepareResponse(){
     }
     _answer = _response->receiveAnswer();
     _bytesToSend = _answer.length();
-    std::cout << "prepareResponse\n";
+    std::cout << _response->receiveAnswer();
 }
 
 int 				RequestHandler::setUpPathFromUrl(size_t lastSlashUrlPos){

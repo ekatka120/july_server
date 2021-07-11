@@ -120,6 +120,10 @@ utils.cpp
 Cgi.hpp
 /Users/dskittri/Downloads/july_boris_server/src/Cgi.hpp
 
+/Users/dskittri/Downloads/july_boris_server/src/Response.cpp
+Response.hpp
+/Users/dskittri/Downloads/july_boris_server/src/Response.hpp
+
 /Users/dskittri/Downloads/july_boris_server/src/utils.cpp
 unistd.h
 -

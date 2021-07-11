@@ -74,9 +74,8 @@ void Cgi::cgi_usage_2(char **filename)
         answer_body = read_from_file(fd);
         unlink(filename[0]);
         unlink(filename[1]);
-        //set Body
-        _answer_header = answer_body;
-        _response_body = "HTTP/1.0 201 Ok";
+
+        _response_body = "HTTP/1.0 201 Ok\n" + answer_body;
     }
 };
 
