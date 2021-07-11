@@ -11,12 +11,12 @@ Connection::Connection(int listenSocketFd, Server *server) :
 	if (_socketFd == -1){
 		throw Exceptions::AcceptException();
 	}
-	std::cout << "SUCCESS CONNECTION FROM IP " <<  inet_ntoa(_addr.sin_addr) << std::endl;//
-	std::cout << "CREATE NEW FD = " << _socketFd << std::endl;
+//	std::cout << "SUCCESS CONNECTION FROM IP " <<  inet_ntoa(_addr.sin_addr) << std::endl;//
+//	std::cout << "CREATE NEW FD = " << _socketFd << std::endl;
 
 	//nonblocking mode
 	if ((flags = fcntl(_socketFd, F_GETFL)) == -1)
-		throw Exceptions::FcntlException();
+//		throw Exceptions::FcntlException();
 	if ((fcntl(_socketFd, F_SETFL, flags | O_NONBLOCK) == -1))
 		throw Exceptions::FcntlException();
 }
@@ -58,7 +58,7 @@ void		Connection::readFromSocket() {
 	int readValue;
 	char buf[BUFFER_SIZE];
 
-	std::cout << "try read from socket " << _socketFd << std::endl;
+//	std::cout << "try read from socket " << _socketFd << std::endl;
 	if ((readValue = read(_socketFd, buf, BUFFER_SIZE + 1)) == -1) {
 		throw Exceptions::ReadException();
 	}
@@ -69,7 +69,7 @@ void		Connection::readFromSocket() {
 		//std::cout << _requestHandler->getRawRequest() << std::endl;//
 	} else {
 		close(_socketFd);
-		std::cout << "\n close fd:" << _socketFd << std::endl;
+//		std::cout << "\n close fd:" << _socketFd << std::endl;
 		_status = CLOSE;
 	}
 	//std::cout << "read return : " << readValue << " BUFF = " << BUFFER_SIZE << std::endl;

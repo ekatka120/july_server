@@ -80,11 +80,11 @@ void						Cluster::resetSockets(){
 		(*it)->resetListenSocket(_readFds);
 		for (std::vector<Connection*>::const_iterator  itt = (*it)->getConnections().begin() ; itt != (*it)->getConnections().end(); ++itt){
 			if ((*itt)->getStatus() == READ){
-				std::cout << "new sockets to read " << (*itt)->getSocketFd() << std::endl;
+				//std::cout << "new sockets to read " << (*itt)->getSocketFd() << std::endl;
 				FD_SET((*itt)->getSocketFd(), &_readFds);
 			}
 			if ((*itt)->getStatus() == WRITE){
-				std::cout << "new sockets to write " << (*itt)->getSocketFd() << std::endl;
+				//std::cout << "new sockets to write " << (*itt)->getSocketFd() << std::endl;
 				FD_SET((*itt)->getSocketFd(), &_writeFds);
 			}
 			(*itt)->getSocketFd() > _maxFd ? _maxFd = (*itt)->getSocketFd() : 0;
