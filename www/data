@@ -1,0 +1,19 @@
+POST /data HTTP/1.1
+Host: localhost:7556
+User-Agent: curl/7.64.1
+Accept: */*
+Content-Length: 48
+Content-Type: application/x-www-form-urlencoded
+
+/Users/dskittri/Desktop/final_server/changes.txtintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost:7556/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+
+zip, deflate, br
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+
