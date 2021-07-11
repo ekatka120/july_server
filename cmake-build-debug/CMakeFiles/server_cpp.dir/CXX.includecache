@@ -112,27 +112,11 @@ Server.hpp
 Response.hpp
 ../includes/Response.hpp
 
-/Users/dskittri/Downloads/july_boris_server/src/RequestHandler.cpp
-RequestHandler.hpp
-/Users/dskittri/Downloads/july_boris_server/src/RequestHandler.hpp
-utils.cpp
-/Users/dskittri/Downloads/july_boris_server/src/utils.cpp
+/Users/patutina/Desktop/july_server/src/Cgi.cpp
 Cgi.hpp
-/Users/dskittri/Downloads/july_boris_server/src/Cgi.hpp
-
-/Users/dskittri/Downloads/july_boris_server/src/Response.cpp
-Response.hpp
-/Users/dskittri/Downloads/july_boris_server/src/Response.hpp
-
-/Users/dskittri/Downloads/july_boris_server/src/utils.cpp
-unistd.h
+/Users/patutina/Desktop/july_server/src/Cgi.hpp
+fcntl.h
 -
-stdlib.h
--
-cstring
--
-iostream
--
-sys/stat.h
+vector
 -
 

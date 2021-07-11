@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/dskittri/Downloads/july_boris_server/src/Cluster.cpp" "/Users/dskittri/Downloads/july_boris_server/cmake-build-debug/CMakeFiles/server_test.dir/src/Cluster.cpp.o"
-  "/Users/dskittri/Downloads/july_boris_server/src/Server.cpp" "/Users/dskittri/Downloads/july_boris_server/cmake-build-debug/CMakeFiles/server_test.dir/src/Server.cpp.o"
-  "/Users/dskittri/Downloads/july_boris_server/src/ServerConfig.cpp" "/Users/dskittri/Downloads/july_boris_server/cmake-build-debug/CMakeFiles/server_test.dir/src/ServerConfig.cpp.o"
+  "/Users/patutina/Desktop/july_server/src/Cluster.cpp" "/Users/patutina/Desktop/july_server/cmake-build-debug/CMakeFiles/server_test.dir/src/Cluster.cpp.o"
+  "/Users/patutina/Desktop/july_server/src/Server.cpp" "/Users/patutina/Desktop/july_server/cmake-build-debug/CMakeFiles/server_test.dir/src/Server.cpp.o"
+  "/Users/patutina/Desktop/july_server/src/ServerConfig.cpp" "/Users/patutina/Desktop/july_server/cmake-build-debug/CMakeFiles/server_test.dir/src/ServerConfig.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")
 

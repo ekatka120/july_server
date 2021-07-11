@@ -72,17 +72,16 @@ void Cgi::cgi_usage_2(char **filename)
             throw Exceptions::OpenTmpFileException();
         }
         answer_body = read_from_file(fd);
+        _response_body = answer_body;
         unlink(filename[0]);
         unlink(filename[1]);
-
-        _response_body = "HTTP/1.0 201 Ok\n" + answer_body;
     }
 };
 
 void Cgi::cgi_usage()
 {
-    char    *filename[2];
-    char    *filename_tmp[4];
+    char    *filename[4];
+    char    *filename_tmp[2];
     int     input;
     int     output;
 
@@ -117,6 +116,8 @@ void Cgi::cgi_usage()
     cgi_usage_2(filename);
     delete filename[0];
     delete filename[1];
+    delete filename_tmp[0];
+    delete filename_tmp[1];
 }
 
 void Cgi::map_envs_to_char_array()
@@ -164,6 +165,10 @@ void Cgi::cgi_start(t_info_to_cgi *info)
     cgi_set_envs();
     map_envs_to_char_array();
     cgi_usage();
+    int i = 0;
+    while (_env[i] != NULL)
+        free (_env[i++]);
+    free(_env);
 }
 
 const std::string &Cgi::getResponseBody() const {

@@ -10,7 +10,7 @@ CMakeFiles/server_cpp.dir/src/Cgi.cpp.o
  ../includes/Response.hpp
  ../includes/Server.hpp
  ../includes/utils.hpp
- /Users/dskittri/Downloads/july_boris_server/src/Cgi.cpp
+ /Users/patutina/Desktop/july_server/src/Cgi.cpp
 CMakeFiles/server_cpp.dir/src/Cluster.cpp.o
  ../includes/Cluster.hpp
  ../includes/Connection.hpp
@@ -23,7 +23,7 @@ CMakeFiles/server_cpp.dir/src/Cluster.cpp.o
  ../includes/ServerConfig.hpp
  ../includes/utils.hpp
  ../src/get_next_line/get_next_line.h
- /Users/dskittri/Downloads/july_boris_server/src/Cluster.cpp
+ /Users/patutina/Desktop/july_server/src/Cluster.cpp
 CMakeFiles/server_cpp.dir/src/Connection.cpp.o
  ../includes/Connection.hpp
  ../includes/Defenitions.hpp
@@ -32,11 +32,11 @@ CMakeFiles/server_cpp.dir/src/Connection.cpp.o
  ../includes/Response.hpp
  ../includes/Server.hpp
  ../includes/utils.hpp
- /Users/dskittri/Downloads/july_boris_server/src/Connection.cpp
+ /Users/patutina/Desktop/july_server/src/Connection.cpp
 CMakeFiles/server_cpp.dir/src/ParseConfig.cpp.o
  ../includes/ParseConfig.hpp
  ../src/get_next_line/get_next_line.h
- /Users/dskittri/Downloads/july_boris_server/src/ParseConfig.cpp
+ /Users/patutina/Desktop/july_server/src/ParseConfig.cpp
 CMakeFiles/server_cpp.dir/src/RequestHandler.cpp.o
  ../includes/Cgi.hpp
  ../includes/Connection.hpp
@@ -46,8 +46,8 @@ CMakeFiles/server_cpp.dir/src/RequestHandler.cpp.o
  ../includes/Response.hpp
  ../includes/Server.hpp
  ../includes/utils.hpp
- /Users/dskittri/Downloads/july_boris_server/src/RequestHandler.cpp
- /Users/dskittri/Downloads/july_boris_server/src/utils.cpp
+ /Users/patutina/Desktop/july_server/src/RequestHandler.cpp
+ /Users/patutina/Desktop/july_server/src/utils.cpp
 CMakeFiles/server_cpp.dir/src/Response.cpp.o
  ../includes/Connection.hpp
  ../includes/Defenitions.hpp
@@ -56,7 +56,7 @@ CMakeFiles/server_cpp.dir/src/Response.cpp.o
  ../includes/Response.hpp
  ../includes/Server.hpp
  ../includes/utils.hpp
- /Users/dskittri/Downloads/july_boris_server/src/Response.cpp
+ /Users/patutina/Desktop/july_server/src/Response.cpp
 CMakeFiles/server_cpp.dir/src/Server.cpp.o
  ../includes/Connection.hpp
  ../includes/Defenitions.hpp
@@ -65,16 +65,16 @@ CMakeFiles/server_cpp.dir/src/Server.cpp.o
  ../includes/Response.hpp
  ../includes/Server.hpp
  ../includes/utils.hpp
- /Users/dskittri/Downloads/july_boris_server/src/Server.cpp
+ /Users/patutina/Desktop/july_server/src/Server.cpp
 CMakeFiles/server_cpp.dir/src/ServerConfig.cpp.o
  ../includes/ServerConfig.hpp
- /Users/dskittri/Downloads/july_boris_server/src/ServerConfig.cpp
+ /Users/patutina/Desktop/july_server/src/ServerConfig.cpp
 CMakeFiles/server_cpp.dir/src/get_next_line/get_next_line.cpp.o
- /Users/dskittri/Downloads/july_boris_server/src/get_next_line/get_next_line.cpp
- /Users/dskittri/Downloads/july_boris_server/src/get_next_line/get_next_line.h
+ /Users/patutina/Desktop/july_server/src/get_next_line/get_next_line.cpp
+ /Users/patutina/Desktop/july_server/src/get_next_line/get_next_line.h
 CMakeFiles/server_cpp.dir/src/get_next_line/get_next_line_utils.cpp.o
- /Users/dskittri/Downloads/july_boris_server/src/get_next_line/get_next_line.h
- /Users/dskittri/Downloads/july_boris_server/src/get_next_line/get_next_line_utils.cpp
+ /Users/patutina/Desktop/july_server/src/get_next_line/get_next_line.h
+ /Users/patutina/Desktop/july_server/src/get_next_line/get_next_line_utils.cpp
 CMakeFiles/server_cpp.dir/src/main.cpp.o
  ../includes/Cluster.hpp
  ../includes/Connection.hpp
@@ -87,4 +87,4 @@ CMakeFiles/server_cpp.dir/src/main.cpp.o
  ../includes/ServerConfig.hpp
  ../includes/utils.hpp
  ../src/get_next_line/get_next_line.h
- /Users/dskittri/Downloads/july_boris_server/src/main.cpp
+ /Users/patutina/Desktop/july_server/src/main.cpp

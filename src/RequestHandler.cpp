@@ -104,10 +104,11 @@ int					RequestHandler::checkNewPartOfRequest(char *partOfRequest){
         //3) если не нашли контент сайз то это весь запрос вернуть (1) _url = /index.html
         //4) PUT, DELETE, POST, GET указано что то другое ставишь флаг _wrongMethods
         //
-    } else if (res == -1){
-        std::cout << "error" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+        }
+//    else if (res == -1){
+//        std::cout << "error" << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
     else {
         prepareResponse();
         _rawRequest = "";
@@ -301,77 +302,62 @@ int					RequestHandler::parseRequest()
     // //</Заглушка>
 }
 
+void	RequestHandler::cgi_handler()
+{
+    t_info_to_cgi *info;
+    info = new t_info_to_cgi;
+
+    info->_answer = _answer;
+    info->_body = _body;
+    info->_bytesToSend = _bytesToSend;
+    info->_currentLocation = _currentLocation;
+    info->_filePath = _filePath;
+    info->_url = _url;
+    info->_cgi_path = _currentLocation->cgi_extension;
+    info->_response = _response;
+    info->_server = _server;
+    info->_headers = _headers;
+
+    Cgi cgi_obj;
+    cgi_obj.cgi_start(info);
+    responseAll("", cgi_obj.getResponseBody());
+}
+
 void	RequestHandler::responseToPostRequest()
 {
     std::string filename = _filePath + _url;
 
-    //Temporary (while _body does not work)
-    //_body = _rawRequest;
-    std::cout << "cgi " << _currentLocation->cgi_extension << "\n";
-    _currentLocation->cgi_extension = "/Users/dskittri/Downloads/july_boris_server/cgi_tester";
-    std::cout << "cgi " << _currentLocation->cgi_extension << "\n";
     if ((_currentLocation->cgi_extension).empty())
     {
         if (if_file_exists(filename) == true)
         {
-            std::cout << "Post, NO CGI, file exists" << std::endl;
             std::ofstream file(filename, std::ios::out | std::ios::in | std::ios::trunc);
             if (file.is_open())
             {
-                file << _body;//body
-                std::cout << "HTTP/1.1 204 No Content..." << std::endl;//или тут 200?
+                responseAll("Status: 204 No Content", "");
                 file.close();
             }
             else
-                std::cout << "HTTP/1.1 403 Forbidden" << std::endl;
+                responseError(ERR403);
         }
         else
         {
-            std::cout << "Post, NO CGI, file does not exist" << std::endl;
             std::ofstream file(filename, std::ios::out | std::ios::in | std::ios::trunc);
             if (file.is_open())
             {
                 file << _body;
-                std::cout << "HTTP/1.1 201 Created..." << std::endl;
-                std::cout << _body << std::endl;
+                responseAll("Status: 201 Created", _body);
                 file.close();
             }
         }
     }
     else
-    {
-        t_info_to_cgi *info;
-        info = new t_info_to_cgi;
-
-        info->_answer = _answer;
-        info->_body = _body;
-        info->_bytesToSend = _bytesToSend;
-        info->_currentLocation = _currentLocation;
-        info->_filePath = _filePath;
-        info->_url = _url;
-        info->_cgi_path = _currentLocation->cgi_extension;
-        info->_response = _response;
-        info->_server = _server;
-        info->_headers = _headers;
-        std::cout << "Post, CGI" << std::endl;
-
-        Cgi cgi_obj;
-        cgi_obj.cgi_start(info);
-        std::stringstream buffer;
-        buffer << cgi_obj.getResponseBody();
-        _response->setUpBody(buffer);
-        _response->setServerAnswer(cgi_obj.getAnswerHeader());
-        _response->setUpHeaders();
-    }
+        cgi_handler();
 }
 
 void				RequestHandler::prepareResponse(){
     setUpPathFromUrl(std::string::npos);
-    struct stat buff;
-//    if (_method == GET)
-        std::cout << _method << std::endl;
-    if (_currentLocation->methods[GET])
-        std::cout << "_currentLocation->methods[GET]" << std::endl;
+    struct stat buff{};
     if (_method == GET && _currentLocation->methods[GET]) {
         if (stat(_filePath.c_str(), &buff) == -1){
             responseError(ERR404);//нет такого пути или файла
@@ -391,6 +377,7 @@ void				RequestHandler::prepareResponse(){
     }
     else if (_method == POST && _currentLocation->methods[POST] )
 	{
+        _currentLocation->cgi_extension = "/Users/patutina/Desktop/july_server/cgi_tester";
 	    std::string tmp_path;
         std::string tmp_url;
         std::size_t found = _filePath.find_last_of("/");
@@ -398,12 +385,11 @@ void				RequestHandler::prepareResponse(){
         tmp_url = _filePath.substr(found+1);
         _url = tmp_url;
         _filePath = tmp_path;
-	    //обрезаем последнее до /url
 		if (stat(_filePath.c_str(), &buff) == -1)
-			responseError(ERR404);//проверка на существование location
-		else if (S_ISDIR(buff.st_mode)) //проверка на то, что location это папка
+			responseError(ERR404);
+		else if (S_ISDIR(buff.st_mode))
 		{
-			if (_url.empty() != true && (_url != "/"))
+			if (_url.empty() != true && (_url != "/") & !(_currentLocation->cgi_extension).empty())
 				responseToPostRequest();
 			else
 				std::cout << "No name of file to create\n";//Compare to original NGINX
@@ -416,7 +402,6 @@ void				RequestHandler::prepareResponse(){
     }
     _answer = _response->receiveAnswer();
     _bytesToSend = _answer.length();
-    std::cout << _response->receiveAnswer();
 }
 
 int 				RequestHandler::setUpPathFromUrl(size_t lastSlashUrlPos){
@@ -442,6 +427,15 @@ int 				RequestHandler::setUpPathFromUrl(size_t lastSlashUrlPos){
         }
     }
     return (setUpPathFromUrl(newLastSlashUrlPos));
+}
+
+void				RequestHandler::responseAll(std::string first_str, std::string body){
+    std::stringstream buffer;
+
+    buffer << body;
+    _response->setUpBody(buffer);
+    _response->setUpHeaders();
+    _response->setServerAnswer(first_str);
 }
 
 void				RequestHandler::responseError(int errNum){

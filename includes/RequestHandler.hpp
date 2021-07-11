@@ -74,9 +74,12 @@ public:
 	void				testPrint(); //удалить потом
 	//Kate's methods
 	void				responseToPostRequest();
+    void	            cgi_handler();
 	void				responseToPutRequest();
 	void				responseToDeleteRequest();
     void 				pushBody(std::string strBody);
+
+    void responseAll(std::string first_str, std::string body);
 };
 
 
