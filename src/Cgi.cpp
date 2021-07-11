@@ -1,7 +1,4 @@
 #include "Cgi.hpp"
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <vector>
 
@@ -45,11 +42,8 @@ void Cgi::cgi_usage_2(char **filename)
     argv[0] = new char[1024];
     argv[1] = new char[1024];
     argv[2] = NULL;
-    //остановилась тут (надо брать данные из request handler)
-    //std::string tmp1 = "/Users/patutina/Desktop/42/new_boris_server/cgi_tester";
-    //std::string tmp2 = "/Users/patutina/Desktop/42/new_boris_server/new_txt_file";
-    std::string tmp2 =  this->_map_envp["PATH_TRANSLATED"];
     std::string tmp1 = this->_map_envp["SCRIPT_NAME"];
+    std::string tmp2 =  this->_map_envp["PATH_TRANSLATED"];
     strcpy(argv[0], tmp1.c_str());
     strcpy(argv[1], tmp2.c_str());
 
@@ -58,19 +52,13 @@ void Cgi::cgi_usage_2(char **filename)
         throw Exceptions::ForkException();
     else if (pid == 0)
     {
-        std::cout << "child process\n";
         input = open(filename[0], O_RDONLY, S_IRUSR);
         output = open(filename[1], O_WRONLY, S_IWUSR);
-        std::cerr << "input\n" << input << std::endl;
-        std::cerr << "output\n" << output << std::endl;
-        std::cerr << dup2(input, 0) << std::endl;
-        std::cerr << dup2(output, 1) << std::endl;
+        dup2(input, 0);
+        dup2(output, 1);
         close(output);
         close(input);
-        std::cerr << "argv[0] " << argv[0] << std::endl;
-        //std::cerr << "output\n" << output << std::endl;
         if (execve(argv[0], argv, _env) == -1) {
-            std::cerr << "Error\n";
             throw Exceptions::ExecveException();
         }
         exit(-1);
@@ -78,13 +66,17 @@ void Cgi::cgi_usage_2(char **filename)
     else
     {
         waitpid(-1, &stat, 0);
-        if ((fd = open(filename[1], O_RDONLY, S_IRUSR)) == -1)
+        if ((fd = open(filename[1], O_RDONLY, S_IRUSR)) == -1) {
+            delete filename[0];
+            delete filename[1];
             throw Exceptions::OpenTmpFileException();
+        }
         answer_body = read_from_file(fd);
         unlink(filename[0]);
         unlink(filename[1]);
-        std::cout << "201 Ok" << std::endl;
-        std::cout << answer_body;
+        //set Body
+        _answer_header = answer_body;
+        _response_body = "HTTP/1.0 201 Ok";
     }
 };
 
@@ -96,19 +88,15 @@ void Cgi::cgi_usage()
     int     output;
 
     std::string template_for_file("/tmp_XXXXXX");
-    //here
     filename[0] = new char [1024];
     filename[1] = new char [1024];
     filename_tmp[0] = new char [100];
     filename_tmp[1] = new char [100];
-//    filename_tmp[2] = new char [100];
-//    filename_tmp[3] = new char [100];
     memset(filename[0], 0, 1024);
     memset(filename[1], 0, 1024);
     memset(filename_tmp[0], 0, 100);
     memset(filename_tmp[1], 0, 100);
-//    memset(filename_tmp[2], 0, 100);
-//    memset(filename_tmp[3], 0, 100);
+
     strncpy(filename[0], _cgi_info->_filePath.c_str(), _cgi_info->_filePath.size());
     strncpy(filename[1], _cgi_info->_filePath.c_str(), _cgi_info->_filePath.size());
     strncpy(filename_tmp[0], template_for_file.c_str(), template_for_file.size());
@@ -132,8 +120,6 @@ void Cgi::cgi_usage()
     delete filename[1];
 }
 
-
-
 void Cgi::map_envs_to_char_array()
 {
     std::map<std::string, std::string>::iterator it;
@@ -154,31 +140,13 @@ void Cgi::map_envs_to_char_array()
 void Cgi::cgi_set_envs()
 {
 
-//    this->_map_envp["AUTH_TYPE"]            = "";
-//    this->_map_envp["CONTENT_LENGTH"]       = "0";
-//    this->_map_envp["CONTENT_TYPE"]         = "text/html";
-//    this->_map_envp["GATEWAY_INTERFACE"]    = "CGI/1.1";
-//    this->_map_envp["PATH_INFO"]            = "/post_body";
-//    this->_map_envp["PATH_TRANSLATED"]      = "/Users/patutina/Desktop/42/new_boris_server/post_body";
-//    this->_map_envp["QUERY_STRING"]         = "";
-//    this->_map_envp["REMOTE_ADDR"]          = "localhost";
-//    this->_map_envp["REMOTE_IDENT"]         = "";
-//    this->_map_envp["REMOTE_USER"]          = "";
-//    this->_map_envp["SCRIPT_NAME"]          = "/Users/patutina/Desktop/42/new_boris_server/cgi_tester";
-//    this->_map_envp["REQUEST_METHOD"]       = "POST";
-//    this->_map_envp["REQUEST_URI"]          = "/post_body";
-//    this->_map_envp["SERVER_NAME"]          = "localhost";
-//    this->_map_envp["SERVER_PORT"]          = "7554";
-//    this->_map_envp["SERVER_PROTOCOL"]      = "HTTP/1.1";
-//    this->_map_envp["SERVER_SOFTWARE"]      = "HTTP/1.1";
-
     this->_map_envp["AUTH_TYPE"]            = "";
     this->_map_envp["CONTENT_LENGTH"]       = _cgi_info->_headers["Content-Length"];
     this->_map_envp["CONTENT_TYPE"]         = _cgi_info->_headers["Content-Type"];
     this->_map_envp["GATEWAY_INTERFACE"]    = "CGI/1.1";
     this->_map_envp["PATH_INFO"]            = _cgi_info->_url;
     this->_map_envp["PATH_TRANSLATED"]      = _cgi_info->_filePath + _cgi_info->_url;
-    this->_map_envp["QUERY_STRING"]         = "";
+    this->_map_envp["QUERY_STRING"]         = _cgi_info->_url;
     this->_map_envp["REMOTE_ADDR"]          = _cgi_info->_server->getHost();
     this->_map_envp["REMOTE_IDENT"]         = _cgi_info->_headers["User-Agent"];
     this->_map_envp["REMOTE_USER"]          = _cgi_info->_headers["User-Agent"];
@@ -196,7 +164,13 @@ void Cgi::cgi_start(t_info_to_cgi *info)
     _cgi_info = info;
     cgi_set_envs();
     map_envs_to_char_array();
-    print_envp(_env);
     cgi_usage();
-    //cgi_response();
+}
+
+const std::string &Cgi::getResponseBody() const {
+    return _response_body;
+}
+
+const std::string &Cgi::getAnswerHeader() const {
+    return _answer_header;
 };

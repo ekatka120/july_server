@@ -8,6 +8,11 @@
 # include <regex>
 # include "utils.hpp"
 
+# define GET 1
+# define POST 2
+# define DELETE 3
+# define PUT 4
+
 class Server;
 class Response;
 typedef struct s_location;

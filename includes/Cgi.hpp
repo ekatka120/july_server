@@ -17,8 +17,12 @@ class Cgi: public RequestHandler
         void cgi_response();
         void map_envs_to_char_array();
         std::string read_from_file(int fd);
+        const std::string &getResponseBody() const;
+        const std::string &getAnswerHeader() const;
     private:
         t_info_to_cgi                       *_cgi_info;
         std::map<std::string, std::string>  _map_envp;
-        char **_env;
+        std::string                         _response_body;
+        std::string                         _answer_header;
+        char                                **_env;
 };
