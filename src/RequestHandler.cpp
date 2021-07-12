@@ -355,6 +355,36 @@ void	RequestHandler::responseToPostRequest()
         cgi_handler();
 }
 
+void	RequestHandler::responseToDeleteRequest()
+{
+    std::string         status_message;
+    std::stringstream   buffer;
+
+    _body = "";
+    std::ifstream file(_filePath);
+    if (file.good())
+    {
+        buffer << file.rdbuf();
+        std::string delete_body(buffer.str());
+
+        std::cout << "DELETE BODY\n" << delete_body << "\n";
+        if (remove(_filePath.c_str()) == 0) {
+            if (delete_body.empty() == true)
+                status_message = "Status: 204 No content";
+            else {
+                status_message = "Status: 200 Ok";
+                _body = delete_body;
+            }
+        } else 
+            status_message = "Status: 202 Accepted";
+    }
+    else
+        status_message = "Status: 403 Forbidden";
+
+//    std::cout << "Status message " << status_message << std::endl;
+//    std::cout << "Body:\n" << _body << std::endl;
+}
+
 void				RequestHandler::prepareResponse(){
     setUpPathFromUrl(std::string::npos);
     struct stat buff{};
@@ -396,6 +426,13 @@ void				RequestHandler::prepareResponse(){
 		}
 		else
 			responseError(ERR404);
+	}
+    else if (_method == DELETE && _currentLocation->methods[DELETE] )
+	{
+        if (stat(_filePath.c_str(), &buff) == -1)
+            responseError(ERR404);//нет такого пути или файла
+        else
+            responseToDeleteRequest();
 	}
     else {
         responseError(ERR405);

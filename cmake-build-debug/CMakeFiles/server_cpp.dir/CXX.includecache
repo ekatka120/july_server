@@ -112,11 +112,23 @@ Server.hpp
 Response.hpp
 ../includes/Response.hpp
 
-/Users/patutina/Desktop/july_server/src/Cgi.cpp
+/Users/patutina/Desktop/july_server/src/RequestHandler.cpp
+RequestHandler.hpp
+/Users/patutina/Desktop/july_server/src/RequestHandler.hpp
+utils.cpp
+/Users/patutina/Desktop/july_server/src/utils.cpp
 Cgi.hpp
 /Users/patutina/Desktop/july_server/src/Cgi.hpp
-fcntl.h
+
+/Users/patutina/Desktop/july_server/src/utils.cpp
+unistd.h
 -
-vector
+stdlib.h
+-
+cstring
+-
+iostream
+-
+sys/stat.h
 -
 
