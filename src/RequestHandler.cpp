@@ -2,6 +2,7 @@
 #include "utils.cpp"
 # include "Cgi.hpp"
 
+
 RequestHandler::RequestHandler(Server *server) : _server(server){
     _response = new Response;
     _method = 0;
@@ -19,8 +20,8 @@ RequestHandler::RequestHandler(const RequestHandler &other){
 }
 
 RequestHandler::~RequestHandler() {
-    //delete _response;
     std::cout << "RequestHandler destructor\n";
+    //delete _response;
 }
 
 RequestHandler&	RequestHandler::operator=( const RequestHandler &other){
@@ -385,6 +386,165 @@ void	RequestHandler::responseToDeleteRequest()
 //    std::cout << "Body:\n" << _body << std::endl;
 }
 
+typedef struct _file
+{
+    std::string name;
+    std::string time;
+    std::string size;
+    bool        if_dir;
+}_file;
+
+void	RequestHandler::autoindex_execution()
+{
+    std::string current_dir;
+    std::string location;
+    std::list<std::string> files;
+    std::list<std::string> times;
+    std::list<std::string> sizes;
+    std::list<_file *> _files;
+
+    current_dir = _filePath;
+    if (current_dir.back() != '/')
+        current_dir = current_dir + "/";
+    location = current_dir;
+    std::cout << "current location: " << location << std::endl;
+
+
+    DIR *d;
+    struct dirent   *dir;
+    struct stat     filestat;
+    char no_seconds[10];
+    char year[10];
+    std::string tmp;
+    t_time   my_time;
+    char **array;
+    std::string time;
+    std::string name;
+    char file_path[1024];
+    _file *file_insatnce;
+
+    d = opendir(location.c_str());
+    files.clear();
+    sizes.clear();
+    times.clear();
+    if (d)
+    {
+        dir = readdir(d);
+        while ((dir = readdir(d)) != NULL)
+        {
+            if(dir->d_name[0] == '.')
+                continue;
+            file_insatnce = new _file;
+            tmp = location + dir->d_name;
+            strcpy(file_path, tmp.c_str());
+            stat(file_path, &filestat);
+            //free(file_path);
+            name = dir->d_name;
+            if (filestat.st_mode == 16877 & dir->d_name[0] != '.')
+                name = name + "/";
+            //Спросить у Бориса, как это сделать нормально
+            array = ft_split(ctime(&filestat.st_mtime), ' ');
+            strcpy(no_seconds, array[3]);
+            strcpy(year, array[4]);
+
+            no_seconds[5] = '\0';
+            year[4] = '\0';
+            my_time.weekday = array[0];
+            my_time.month = array[1];
+            my_time.day = array[2];
+            my_time.time_no_seconds = no_seconds;
+            my_time.year = year;
+
+            time = my_time.day;
+            if (my_time.day[1] == '\0')
+                time = "0" + time;
+            time = time + "-";
+            time = time + my_time.month;
+            time = time + "-";
+            time = time + my_time.year;
+            time = time + " ";
+            time = time + my_time.time_no_seconds;
+
+            if (filestat.st_mode == 16877){
+                tmp = "-";
+                file_insatnce->if_dir = true;}
+            else{
+                tmp = std::to_string(filestat.st_size);
+                file_insatnce->if_dir = false;}
+            file_insatnce->size = tmp;
+            file_insatnce->time = time;
+            file_insatnce->name = name;
+            _files.push_back(file_insatnce);
+            for (int i = 0; array[i] != NULL;)
+                free(array[i++]);
+            free(array);
+        }
+        closedir(d);
+        //if closedir() == -1, throw Exception
+    }
+    //else Exception
+
+    std::string response;
+	std::string line;
+
+    response = "";
+    response = response + "<html>\n"
+                          + "<head><title>Index of " + location + "</title></head>\n"
+                          + "<body bgcolor=\"white\">\n"
+                          + "<h1>Index of " + location + "</h1><hr><pre>";
+    for (std::list<_file *>::iterator it = _files.begin(); it != _files.end(); )
+	{
+        if ((*it)->if_dir == true) {
+            line = "<a href=\"";
+            line = line + (*it)->name;
+            line = line + "\">";
+            line = line + (*it)->name;
+            line = line + "</a>";
+            int space = ((*it)->name).size();
+            for (int space = ((*it)->name).size(); space != 70; space++)
+                line = line + " ";
+            line = line + (*it)->time;
+            for (space = 0; space != 30 - ((*it)->size).size(); space++)
+                line = line + " ";
+            line = line + (*it)->size;
+            it++;
+            line += "\n";
+            response = response + line;
+        }
+        else
+            it++;
+	}
+    for (std::list<_file *>::iterator it = _files.begin(); it != _files.end(); )
+    {
+        if ((*it)->if_dir == false) {
+            line = "<a href=\"";
+            line = line + (*it)->name;
+            line = line + "\">";
+            line = line + (*it)->name;
+            line = line + "</a>";
+            int space = ((*it)->name).size();
+            for (int space = ((*it)->name).size(); space != 70; space++)
+                line = line + " ";
+            line = line + (*it)->time;
+            for (space = 0; space != 30 - ((*it)->size).size(); space++)
+                line = line + " ";
+            line = line + (*it)->size;
+            it++;
+            line += "\n";
+            response = response + line;
+        }
+        else
+            it++;
+    }
+    for (std::list<_file *>::iterator it = _files.begin(); it != _files.end(); )
+    {
+        delete(*it++);
+    }
+    response = response + "</pre><hr></body>\n"
+                          "</html>";
+    responseAll("HTTP/1.1 200 OK" ,response);
+}
+
 void				RequestHandler::prepareResponse(){
     setUpPathFromUrl(std::string::npos);
     struct stat buff{};
@@ -392,7 +552,9 @@ void				RequestHandler::prepareResponse(){
         if (stat(_filePath.c_str(), &buff) == -1){
             responseError(ERR404);//нет такого пути или файла
         } else if (S_ISDIR(buff.st_mode)){
-            if (!_currentLocation->index.empty()){
+            if (_currentLocation->autoindex == 1) {
+                autoindex_execution();
+            } else if (!_currentLocation->index.empty()){
                 _filePath += _currentLocation->index;
                 if (stat((_filePath).c_str(), &buff) == -1) {
                     responseError(ERR404);

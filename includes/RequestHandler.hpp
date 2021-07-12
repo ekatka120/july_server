@@ -7,6 +7,9 @@
 # include <climits>
 # include <regex>
 # include "utils.hpp"
+# include <list>
+# include <time.h>
+# include <dirent.h>
 
 # define GET 1
 # define POST 2
@@ -78,8 +81,8 @@ public:
 	void				responseToPutRequest();
 	void				responseToDeleteRequest();
     void 				pushBody(std::string strBody);
-
-    void responseAll(std::string first_str, std::string body);
+	void				autoindex_execution();
+    void				responseAll(std::string first_str, std::string body);
 };
 
 
