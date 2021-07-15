@@ -1,0 +1,5 @@
+1) Files Cgi.cpp and chi.hpp are included
+2) File utils cpp is included
+3) New exceptions are added
+4) Добавление новых условий в метод RequestHandler::prepareResponse()
+5) Добавление новых методов RequestHandler.cpp RequestHandler.hpp

@@ -71,8 +71,9 @@ void Cgi::cgi_usage_2(char **filename)
             delete filename[1];
             throw Exceptions::OpenTmpFileException();
         }
+        //changed
         answer_body = read_from_file(fd);
-        _response_body = answer_body;
+        _response_body = answer_body.substr (58);
         unlink(filename[0]);
         unlink(filename[1]);
     }

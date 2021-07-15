@@ -34,7 +34,7 @@ Cluster::Cluster(ParseConfig *parser) : _maxFd(0){
 			tmpLocation->url = locations_sections[i];
 			tmpLocation->root = locations_info[locations_sections[i]]["root"];
 			tmpLocation->index = locations_info[locations_sections[i]]["index"];
-			tmpLocation->cgi_extension = locations_info[locations_sections[i]]["cgi_extension"];
+			tmpLocation->cgi_path = locations_info[locations_sections[i]]["cgi_path"];
 			tmpLocation->autoindex = locations_info[locations_sections[i]]["autoindex"] == "on"? 1: 0;
 			tmpLocation->methods[GET] = 0;
 			tmpLocation->methods[POST] = 0;

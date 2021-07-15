@@ -12,7 +12,6 @@ RequestHandler::RequestHandler(Server *server) : _server(server){
     _badContentSize = 0;
     _wrongHTTPVersion = 0;
     _badRequest = 0;
-    std::cout << "Constructor\n";
 }
 
 RequestHandler::RequestHandler(const RequestHandler &other){
@@ -20,8 +19,6 @@ RequestHandler::RequestHandler(const RequestHandler &other){
 }
 
 RequestHandler::~RequestHandler() {
-    std::cout << "RequestHandler destructor\n";
-    //delete _response;
 }
 
 RequestHandler&	RequestHandler::operator=( const RequestHandler &other){
@@ -314,28 +311,29 @@ void	RequestHandler::cgi_handler()
     info->_currentLocation = _currentLocation;
     info->_filePath = _filePath;
     info->_url = _url;
-    info->_cgi_path = _currentLocation->cgi_extension;
+    info->_cgi_path = _currentLocation->cgi_path;
     info->_response = _response;
     info->_server = _server;
     info->_headers = _headers;
 
     Cgi cgi_obj;
     cgi_obj.cgi_start(info);
-    responseAll("", cgi_obj.getResponseBody());
+    //changed
+    responseAll("HTTP/1.1 200 Ok", cgi_obj.getResponseBody());
 }
 
 void	RequestHandler::responseToPostRequest()
 {
     std::string filename = _filePath + _url;
 
-    if ((_currentLocation->cgi_extension).empty())
+    if ((_currentLocation->cgi_path).empty())
     {
         if (if_file_exists(filename) == true)
         {
             std::ofstream file(filename, std::ios::out | std::ios::in | std::ios::trunc);
             if (file.is_open())
             {
-                responseAll("Status: 204 No Content", "");
+                responseAll("HTTP/1.1 204 No Content", "");
                 file.close();
             }
             else
@@ -347,7 +345,7 @@ void	RequestHandler::responseToPostRequest()
             if (file.is_open())
             {
                 file << _body;
-                responseAll("Status: 201 Created", _body);
+                responseAll("HTTP/1.1 201 Created", _body);
                 file.close();
             }
         }
@@ -368,22 +366,19 @@ void	RequestHandler::responseToDeleteRequest()
         buffer << file.rdbuf();
         std::string delete_body(buffer.str());
 
-        std::cout << "DELETE BODY\n" << delete_body << "\n";
         if (remove(_filePath.c_str()) == 0) {
             if (delete_body.empty() == true)
-                status_message = "Status: 204 No content";
+                status_message = "HTTP/1.1 204 No content";
             else {
-                status_message = "Status: 200 Ok";
+                status_message = "HTTP/1.1 200 Ok";
                 _body = delete_body;
             }
         } else 
-            status_message = "Status: 202 Accepted";
+            status_message = "HTTP/1.1 202 Accepted";
     }
     else
-        status_message = "Status: 403 Forbidden";
-
-//    std::cout << "Status message " << status_message << std::endl;
-//    std::cout << "Body:\n" << _body << std::endl;
+        status_message = "HTTP/1.1 403 Forbidden";
+    responseAll(status_message, "");
 }
 
 typedef struct _file
@@ -552,15 +547,15 @@ void				RequestHandler::prepareResponse(){
         if (stat(_filePath.c_str(), &buff) == -1){
             responseError(ERR404);//нет такого пути или файла
         } else if (S_ISDIR(buff.st_mode)){
-            if (_currentLocation->autoindex == 1) {
-                autoindex_execution();
-            } else if (!_currentLocation->index.empty()){
+            if (!_currentLocation->index.empty()) {
                 _filePath += _currentLocation->index;
                 if (stat((_filePath).c_str(), &buff) == -1) {
                     responseError(ERR404);
                 } else {
                     responseToGetRequest();
                 }
+            } else if (_currentLocation->autoindex == 1) {
+                autoindex_execution();
             } else if (stat((_filePath + "index.html").c_str(), &buff) != -1) {
                 responseToGetRequest();
             } else
@@ -569,7 +564,9 @@ void				RequestHandler::prepareResponse(){
     }
     else if (_method == POST && _currentLocation->methods[POST] )
 	{
-        _currentLocation->cgi_extension = "/Users/patutina/Desktop/july_server/cgi_tester";
+        _currentLocation->cgi_path = "/Users/patutina/Desktop/july_server/cgi_tester";
+        //NEEEEEED TO FIX!
+        //_currentLocation->cgi_path = "";
 	    std::string tmp_path;
         std::string tmp_url;
         std::size_t found = _filePath.find_last_of("/");
@@ -581,20 +578,30 @@ void				RequestHandler::prepareResponse(){
 			responseError(ERR404);
 		else if (S_ISDIR(buff.st_mode))
 		{
-			if (_url.empty() != true && (_url != "/") & !(_currentLocation->cgi_extension).empty())
+		    //changed
+			if (_url.empty() != true && (_url != "/"))
 				responseToPostRequest();
+			else if (!_currentLocation->cgi_path.empty())
+                responseToPostRequest();
 			else
-				std::cout << "No name of file to create\n";//Compare to original NGINX
+                responseError(ERR400);
 		}
 		else
 			responseError(ERR404);
 	}
     else if (_method == DELETE && _currentLocation->methods[DELETE] )
 	{
+        std::size_t found = _filePath.find_last_of("/");
+        _url = _filePath.substr(found+1);
         if (stat(_filePath.c_str(), &buff) == -1)
             responseError(ERR404);//нет такого пути или файла
         else
-            responseToDeleteRequest();
+        {
+            if (_url.empty() || !(_url != "/"))
+                responseError(ERR400);
+            else
+                responseToDeleteRequest();//Compare to original NGINX
+        }
 	}
     else {
         responseError(ERR405);
