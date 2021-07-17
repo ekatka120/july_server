@@ -165,6 +165,7 @@ void Cgi::cgi_start(t_info_to_cgi *info)
     _cgi_info = info;
     cgi_set_envs();
     map_envs_to_char_array();
+    print_envp(_env);
     cgi_usage();
     int i = 0;
     while (_env[i] != NULL)
